@@ -1,6 +1,12 @@
 package beer.calculator;
 
 import static java.lang.Math.PI;
+import beer.calculator.entities.Malt;
+import beer.calculator.entities.MaltCategory;
+
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Esegue centralmente tutti i calcoli relativi alla produzione
  * 
@@ -49,9 +55,89 @@ public class Calculator {
 		System.out.println("\n\nCalcolo dimensioni pentola a partire dal batch size desiderato di " + batchSize);
 		calc.calcolaDimensioniPentola(batchSize);
 		
+		Malt pils = new Malt();
+		pils.setCategory(MaltCategory.BASE);
+		pils.setName("Pils");
+		pils.setPoints(30);
+		pils.setSrm(1.0);
+		Malt pale = new Malt();
+		pale.setCategory(MaltCategory.BASE);
+		pale.setName("Pale");
+		pale.setPoints(29);
+		pale.setKgs(1.0);
 		
+		
+		Malt munich = new Malt();
+		munich.setCategory(MaltCategory.SPECIAL);
+		Malt vienna = new Malt();
+		vienna.setCategory(MaltCategory.SPECIAL);
+		
+		Malt black = new Malt();
+		black.setCategory(MaltCategory.VERYSPECIAL);
+		black.setPoints(4);
+		black.setKgs(0.05);
+		List<Malt> malts = new ArrayList<>();
+		
+		malts.add(pale);
+		malts.add(black);
+		int liters = 10;
+		double finalOg = calc.calcolaOgTeorico(malts, liters);
+		
+		
+		System.out.println("Final og teorico: 10" + (int)finalOg);
+		finalOg = calc.calcolaOgEfficienza(malts, liters, 0.70);
+		System.out.println("Final og efficienza: 10" + (int)finalOg);
 	}
 	
+	/**
+	 * Calcolo OG Teorico
+	 * A partire dai tipi e le quantità di malto utilizzate nel batch
+	 * è possibile determinare la OG teorica. 
+	 * Si prevede l'utilizzo di un catalogo per gli ingredienti comuni da cui 
+	 * creare le singole istanze necessarie per ogni ricetta.
+	 * 
+	 * Si parte dal fatto che 1kg di zucchero purissimo disciolto in 10 lt di acqua 
+	 * farà ottenere una OG massima teorica di 1038. (tipicamente 1036)
+	 * 
+	 * Ogni malto ha indicato un punteggio relativo a questo litraggio. (10 lt)
+	 * 
+	 *  e.g. 
+	 *  single malt
+	 *  Malto 1  = 25 pt
+	 *  O.G. desiderata = 1040 (40pt)
+	 *  Kg = OG/25pt
+	 *  
+	 *  più malti
+	 *  Malto 1 = 28 pt ( in base alla ricetta è possibile conoscere la percentuale di malti)
+	 *  Malto 2 = 15 pt
+	 *  
+	 *  O.G. desiderata 1040 (40pt)
+	 *  Kg Malto 1 = 1,35 (38 pt)
+	 *  Kg Malto 2 = 0,133 (2 pt)
+	 *  
+	 */
+	public double calcolaOgTeorico(List<Malt> malts, int liters){
+		double og =0.0;
+		for(Malt malt:malts) {
+			og += malt.getKgs() * malt.getPoints(); 
+		}
+		return og;
+	}
+	
+	public double calcolaOgEfficienza(List<Malt> malts, int liters, double efficienza) {
+		return efficienza * calcolaOgTeorico(malts, liters);
+				
+	}
+	
+	/**
+	 * Calcolo OG teorico con efficienza
+	 * 
+	 * Normalmente gli impianti homebrewing hanno una efficienza che si aggira tra il 60% r 80%
+	 * Per avere un dato Kg più corretto andrebbe moltiplicato per l'efficienza dell'impianto in uso.
+	 * 
+	 * Efficienza = OG x (lt/10) / (pt x Kg)
+	 * 
+	 */
 	
 	/**
 	 * Calcola la capienza della pentola in litri a partire dal volume finale che si vuole ottenere
