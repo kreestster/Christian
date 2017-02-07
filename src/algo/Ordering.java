@@ -15,7 +15,7 @@ public class Ordering {
 			leftOrdered = naturalMergeSort(start, Math.floorDiv(end, 2), partition );
 			rightOrdered = naturalMergeSort(Math.floorDiv(end, 2) +1,end, partition );
 		}
-		if()
+//		if()
 		return null;
 	}
 	private boolean isOrdered(List<Comparable> partition) {

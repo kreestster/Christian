@@ -8,11 +8,37 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Esegue centralmente tutti i calcoli relativi alla produzione
+ * Esegue centralmente tutti i calcoli relativi alla produzione</br>
+ * <h1>Calcolo OG Teorico</h1></br>
+ * A partire dai tipi e le quantità di malto utilizzate nel batch
+ * è possibile determinare la OG teorica.</br> 
+ * Si prevede l'utilizzo di un catalogo per gli ingredienti comuni da cui 
+ * creare le singole istanze necessarie per ogni ricetta.</br></br>
  * 
+ * Si parte dal fatto che 1kg di zucchero purissimo disciolto in 10 lt di acqua 
+ * farà ottenere una OG massima teorica di 1038. (tipicamente 1036).</br></br>
+ * 
+ * Ogni malto ha indicato un punteggio relativo a questo litraggio. (10 lt)</br></br>
+ * 
+ *  e.g. </br>
+ *  single malt </br>
+ *  Malto 1  = 25 pt </br>
+ *  O.G. desiderata = 1040 (40pt) </br>
+ *  Kg = OG/25pt = 1,6 kg</br></br>
+ *  
+ *  più malti</br>
+ *  Malto 1 = 28 pt ( in base alla ricetta è possibile conoscere la percentuale di malti)</br>
+ *  Malto 2 = 15 pt</br></br>
+ *  
+ *  O.G. desiderata 1040 (40pt)</br>
+ *  Kg Malto 1 = 1,35 (38 pt)</br>
+ *  Kg Malto 2 = 0,133 (2 pt)</br></br>
+ *  
  * @author Christian
  *
- */
+ *	
+
+	 */
 public class Calculator {
 	private double percSpessoreSicurezza = 0.33; 
 	private double[] raggiComuni ={25.0d, 26.0d, 28.0d, 30.0d} ;
@@ -55,27 +81,13 @@ public class Calculator {
 		System.out.println("\n\nCalcolo dimensioni pentola a partire dal batch size desiderato di " + batchSize);
 		calc.calcolaDimensioniPentola(batchSize);
 		
-		Malt pils = new Malt();
-		pils.setCategory(MaltCategory.BASE);
-		pils.setName("Pils");
-		pils.setPoints(30);
-		pils.setSrm(1.0);
-		Malt pale = new Malt();
-		pale.setCategory(MaltCategory.BASE);
-		pale.setName("Pale");
-		pale.setPoints(29);
-		pale.setKgs(1.0);
+		Malt pils = new Malt(MaltCategory.BASE, Malt.PILS, 30, 1.0, 2 );
+		Malt pale = new Malt(MaltCategory.BASE, Malt.PALE, 29, 1.0, 2 );
 		
+		Malt munich = new Malt(MaltCategory.SPECIAL, "Munich");
+		Malt vienna = new Malt(MaltCategory.SPECIAL, "Vienna");
+		Malt black = new Malt(MaltCategory.VERYSPECIAL, "Black", 4, 10.0,0.05);
 		
-		Malt munich = new Malt();
-		munich.setCategory(MaltCategory.SPECIAL);
-		Malt vienna = new Malt();
-		vienna.setCategory(MaltCategory.SPECIAL);
-		
-		Malt black = new Malt();
-		black.setCategory(MaltCategory.VERYSPECIAL);
-		black.setPoints(4);
-		black.setKgs(0.05);
 		List<Malt> malts = new ArrayList<>();
 		
 		malts.add(pale);
@@ -89,33 +101,9 @@ public class Calculator {
 		System.out.println("Final og efficienza: 10" + (int)finalOg);
 	}
 	
-	/**
-	 * Calcolo OG Teorico
-	 * A partire dai tipi e le quantità di malto utilizzate nel batch
-	 * è possibile determinare la OG teorica. 
-	 * Si prevede l'utilizzo di un catalogo per gli ingredienti comuni da cui 
-	 * creare le singole istanze necessarie per ogni ricetta.
-	 * 
-	 * Si parte dal fatto che 1kg di zucchero purissimo disciolto in 10 lt di acqua 
-	 * farà ottenere una OG massima teorica di 1038. (tipicamente 1036)
-	 * 
-	 * Ogni malto ha indicato un punteggio relativo a questo litraggio. (10 lt)
-	 * 
-	 *  e.g. 
-	 *  single malt
-	 *  Malto 1  = 25 pt
-	 *  O.G. desiderata = 1040 (40pt)
-	 *  Kg = OG/25pt
-	 *  
-	 *  più malti
-	 *  Malto 1 = 28 pt ( in base alla ricetta è possibile conoscere la percentuale di malti)
-	 *  Malto 2 = 15 pt
-	 *  
-	 *  O.G. desiderata 1040 (40pt)
-	 *  Kg Malto 1 = 1,35 (38 pt)
-	 *  Kg Malto 2 = 0,133 (2 pt)
-	 *  
-	 */
+	public double calcolaVol(int og, int fg) {
+		return (fg - og) /7.5;
+	}
 	public double calcolaOgTeorico(List<Malt> malts, int liters){
 		double og =0.0;
 		for(Malt malt:malts) {

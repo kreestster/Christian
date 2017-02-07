@@ -14,6 +14,20 @@ public class Malt implements Serializable{
 	private Double srm;
 	private Double kgs;
 	
+	public static final String PILS = "Pils";
+	public static final String PALE = "Pale";
+	public Malt(MaltCategory cat, String name) {
+		this.setCategory(cat);
+		this.setName(name);
+	}
+	
+	public Malt(MaltCategory cat, String name, int points, double srm, double kgs) {
+		this(cat, name);
+		this.setPoints(points);
+		this.setSrm(srm);
+		this.setKgs(kgs);
+		
+	}
 	
 	public String getName() {
 		return name;
@@ -51,24 +65,12 @@ public class Malt implements Serializable{
 	}
 	
 	public static void main(String...strings) {
-		Malt pils = new Malt();
-		pils.setCategory(MaltCategory.BASE);
-		pils.setName("Pils");
-		pils.setPoints(30);
-		pils.setSrm(1.0);
-		Malt pale = new Malt();
-		pale.setCategory(MaltCategory.BASE);
-		pale.setName("Pale");
-		pale.setPoints(29);
+		Malt pils = new Malt(MaltCategory.BASE, PILS, 30, 1.0, 2 );
+		Malt pale = new Malt(MaltCategory.BASE, PALE, 29, 1.0, 1 );
 		
-		
-		Malt munich = new Malt();
-		munich.setCategory(MaltCategory.SPECIAL);
-		Malt vienna = new Malt();
-		vienna.setCategory(MaltCategory.SPECIAL);
-		
-		Malt black = new Malt();
-		black.setCategory(MaltCategory.VERYSPECIAL);
+		Malt munich = new Malt(MaltCategory.SPECIAL, "Munich");
+		Malt vienna = new Malt(MaltCategory.SPECIAL, "Vienna");
+		Malt black = new Malt(MaltCategory.SPECIAL, "Black");
 		
 	}
 
